@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# PyCharm
+.idea/
+
+# Configuration file
+bot_config.json
