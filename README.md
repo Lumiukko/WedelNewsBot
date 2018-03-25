@@ -18,6 +18,7 @@ The bot is currently live and tweeting at: https://twitter.com/WedelNews
 - [x] Use 280 character tweets.
 - [x] Use "#ANZEIGE" hashtag in the beginning of tweets for paid advertisements.
 - [ ] Use machine learning to automatically classify articles and add hashtags accordingly.
+- [ ] Add robustness against tinyurl errors (e.g. service unavailable).
 - [ ] Use a database for storing the news instead of a JSON file.
 - [ ] Remove old news that are no longer on the website to save space and speed things up.
 
