@@ -1,2 +1,22 @@
 # WedelNewsBot
-Fetches news from wedel.de (official website of a town in the north of Germany) and posts them to Twitter.
+Fetches news from https://www.wedel.de/ (official website of a town in the north of Germany) and posts them to Twitter.
+
+## Live Bot
+
+The bot is currently live and tweeting at: https://twitter.com/WedelNews
+
+## Third party modules and changes
+
+**Warning:** The `twitter` module has been changed to support 280 characters per tweet. I grew tired of waiting for an official update and changed it myself. If the official module has been changed by now, there shouldn't be any issues.
+
+* `twitter`: https://github.com/bear/python-twitter/
+* `bs4`: https://pypi.python.org/pypi/beautifulsoup4
+
+## Feature / ToDo List
+
+- [x] Place configuration variables outside the code and deploy on GitHub :)
+- [x] Use 280 character tweets.
+- [x] Use "#ANZEIGE" hashtag in the beginning of tweets for paid advertisements.
+- [ ] Use machine learning to automatically classify articles and add hashtags accordingly.
+- [ ] Remove old news that are no longer on the website to save space and speed things up.
+
