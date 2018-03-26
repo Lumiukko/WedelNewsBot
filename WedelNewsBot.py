@@ -15,6 +15,8 @@ import twitter
 from twitter.error import TwitterError
 import os
 
+from tweet_tagger import TweetTagger
+
 
 NEWS_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "wedelnews.json")
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "bot_config.json")
@@ -26,6 +28,14 @@ T_CONSUMER_KEY = bot_config["T_CONSUMER_KEY"]
 T_CONSUMER_SECRET = bot_config["T_CONSUMER_SECRET"]
 T_ACCESS_TOKEN = bot_config["T_ACCESS_TOKEN"]
 T_ACCESS_TOKEN_SECRET = bot_config["T_ACCESS_TOKEN_SECRET"]
+
+# Experimental!
+USE_HASHTAG_SUGGESTIONS = True
+TRAIN_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "training.json")
+PRETRAINED_CLF = os.path.join(os.path.dirname(os.path.realpath(__file__)), "pretrained_classifier.pkl")
+TAG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "tag_map.json")
+with open(TAG_FILE, "r") as f:
+    TAG_MAP = json.load(f)
 
 
 twapi = twitter.Api(consumer_key=T_CONSUMER_KEY,
@@ -121,6 +131,7 @@ def get_last_url_part(url):
 
 
 def get_short_url(url):
+    return "URLSTUFF"
     return requests.get("http://tinyurl.com/api-create.php?url={0}".format(url)).text
 
 
@@ -128,22 +139,37 @@ def get_tweet_length(article):
     return sum(map(len, [article["paragraphs"][0], article["title"]])) + 23
 
 
-def make_tweets(articles):
-    max_tweet_len = 273
+def make_tweets(articles, tagger=None):
+    max_tweet_len = 272
     tweets = []
+
     for a in articles:
+        tags = []
+        if tagger:
+            tags = tagger.suggest_hashtags(a)
+
         summary = a["paragraphs"][0]
         if summary == "ANZEIGE":
             summary = a["paragraphs"][1]
             a["title"] = "#ANZEIGE: {}".format(a["title"])
         url = a["short_url"]
+
         tu_len = len(url) + len(a["title"])
-        tweet = "{} — {} {}".format(a["title"], summary, url)
+
+        tagstring = ""
+        ts_len = 0
+        if len(tags) > 0:
+            tagstring = "#{}".format(" #".join(tags))
+            ts_len = len(tagstring)
+
+        tweet = "{} — {} {} {}".format(a["title"], summary, url, tagstring)
+
         if len(tweet) > max_tweet_len:
-            summary = summary[:(max_tweet_len - tu_len - 9)] + "[...]"
-            tweet = "{} — {} {}".format(a["title"], summary, url)
+            summary = summary[:(max_tweet_len - tu_len - ts_len - 9)] + "[...]"
+            tweet = "{} — {} {} {}".format(a["title"], summary, url, tagstring)
         tweet = "{} #Wedel".format(tweet)
         tweets.append(tweet)
+
     return tweets
 
 
@@ -179,8 +205,13 @@ if __name__ == "__main__":
     add_shortened_urls(article_list)
     print()
 
+    #TODO: Do not load the classifier if there are no new articles...
+    if USE_HASHTAG_SUGGESTIONS:
+        tagger = TweetTagger(NEWS_FILE, TRAIN_FILE, tag_map=TAG_MAP)
+        tagger.load_classifier(PRETRAINED_CLF)
+
     for new_article in get_unread_and_mark_as_read(article_list):
-        live_tweet = make_tweets([new_article])[0]
+        live_tweet = make_tweets([new_article], tagger=tagger)[0]
 
         try:
             # Only run this on the live server.
@@ -192,7 +223,9 @@ if __name__ == "__main__":
         print("Tweeting: {} --> {}".format(
             new_article["title"].encode("ascii", "replace"),
             new_article["short_url"].encode("ascii", "replace")))
-        print(live_tweet.encode("ascii", "replace"))
+        print("{} ::: {}".format(
+            len(live_tweet.encode("ascii", "replace")),
+            live_tweet.encode("ascii", "replace")))
         print()
 
     print("Script finished.")
