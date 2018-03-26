@@ -131,7 +131,6 @@ def get_last_url_part(url):
 
 
 def get_short_url(url):
-    return "URLSTUFF"
     return requests.get("http://tinyurl.com/api-create.php?url={0}".format(url)).text
 
 
@@ -159,14 +158,14 @@ def make_tweets(articles, tagger=None):
         tagstring = ""
         ts_len = 0
         if len(tags) > 0:
-            tagstring = "#{}".format(" #".join(tags))
+            tagstring = " #{}".format(" #".join(tags))
             ts_len = len(tagstring)
 
-        tweet = "{} — {} {} {}".format(a["title"], summary, url, tagstring)
+        tweet = "{} — {} {}{}".format(a["title"], summary, url, tagstring)
 
         if len(tweet) > max_tweet_len:
             summary = summary[:(max_tweet_len - tu_len - ts_len - 9)] + "[...]"
-            tweet = "{} — {} {} {}".format(a["title"], summary, url, tagstring)
+            tweet = "{} — {} {}{}".format(a["title"], summary, url, tagstring)
         tweet = "{} #Wedel".format(tweet)
         tweets.append(tweet)
 
@@ -196,6 +195,7 @@ def get_unread_and_mark_as_read(articles):
     if has_new:
         with open(NEWS_FILE, "w", encoding="utf-8") as f:
             json.dump(known_articles, f)
+        pass
 
 
 if __name__ == "__main__":
@@ -216,7 +216,7 @@ if __name__ == "__main__":
         try:
             # Only run this on the live server.
             status = twapi.PostUpdate(live_tweet)
-            # pass
+            #pass
         except TwitterError as e:
             print(e)
 
