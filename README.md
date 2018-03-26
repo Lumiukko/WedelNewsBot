@@ -11,14 +11,17 @@ The bot is currently live and tweeting at: https://twitter.com/WedelNews
 
 * `twitter`: https://github.com/bear/python-twitter/
 * `bs4`: https://pypi.python.org/pypi/beautifulsoup4
+* `sklearn`: http://scikit-learn.org/
+* `nltk`: http://nltk.org/
 
 ## Feature / ToDo List
 
 - [x] Place configuration variables outside the code and deploy on GitHub :)
 - [x] Use 280 character tweets.
 - [x] Use "#ANZEIGE" hashtag in the beginning of tweets for paid advertisements.
-- [ ] Use machine learning to automatically classify articles and add hashtags accordingly.
+- [X] Use machine learning to automatically classify articles and add hashtags accordingly.
 - [ ] Add robustness against tinyurl errors (e.g. service unavailable).
 - [ ] Use a database for storing the news instead of a JSON file.
 - [ ] Remove old news that are no longer on the website to save space and speed things up.
+- [ ] Optimize machine learning tag suggestions.
 
