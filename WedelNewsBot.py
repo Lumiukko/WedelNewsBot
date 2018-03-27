@@ -206,17 +206,19 @@ if __name__ == "__main__":
     print()
 
     #TODO: Do not load the classifier if there are no new articles...
+    tagger = None
     if USE_HASHTAG_SUGGESTIONS:
         tagger = TweetTagger(NEWS_FILE, TRAIN_FILE, tag_map=TAG_MAP)
-        tagger.load_classifier(PRETRAINED_CLF)
+        # tagger.load_classifier(PRETRAINED_CLF)
+        tagger.train_classifier()
 
     for new_article in get_unread_and_mark_as_read(article_list):
         live_tweet = make_tweets([new_article], tagger=tagger)[0]
 
         try:
             # Only run this on the live server.
-            status = twapi.PostUpdate(live_tweet)
-            #pass
+            # status = twapi.PostUpdate(live_tweet)
+            pass
         except TwitterError as e:
             print(e)
 
