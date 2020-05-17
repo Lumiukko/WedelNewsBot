@@ -28,7 +28,10 @@ class TweetTagger:
                 img_captions.append(img[1])
         all_captions = "\n".join(img_captions)
         all_text = "\n".join(news["paragraphs"])
-        all_content = "\n\n".join([news["title"], all_text, all_captions])
+
+        teaser = ("" if "teaser" not in news else news["teaser"])
+
+        all_content = "\n\n".join([news["title"], teaser, all_text, all_captions])
         return all_content
 
     def load_classifier(self, classifier_file):
@@ -135,7 +138,9 @@ class TweetTagger:
                         img_captions.append(img[1])
                 all_captions = "\n".join(img_captions)
                 all_text = "\n".join(news[n]["paragraphs"])
-                all_content = "\n\n".join([news[n]["title"], all_text, all_captions])
+
+                teaser = ("" if "teaser" not in news else news["teaser"])
+                all_content = "\n\n".join([news[n]["title"], teaser, all_text, all_captions])
 
                 test_data.append(all_content)
                 test_data_original.append(news[n])
